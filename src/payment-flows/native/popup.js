@@ -85,7 +85,7 @@ function getEligibility({ fundingSource, props, serviceData, sfvc, validatePromi
                 merchantID:   merchantID[0],
                 domain:       merchantDomain
             }).then(eligibility => {
-                const ineligibilityReason = eligibility && eligibility[fundingSource] ? eligibility[fundingSource].ineligibilityReason : '';
+                const ineligibilityReason = eligibility && eligibility[fundingSource]?.ineligibilityReason ? eligibility[fundingSource].ineligibilityReason : '';
 
                 if (!eligibility || !eligibility[fundingSource] || !eligibility[fundingSource].eligibility) {
                     getLogger().info(`native_appswitch_ineligible`, { orderID })

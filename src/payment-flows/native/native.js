@@ -8,7 +8,8 @@ import { FPTI_KEY } from '@paypal/sdk-constants/src';
 import { type CrossDomainWindowType } from 'cross-domain-utils/src';
 
 import { updateButtonClientConfig, onLsatUpgradeCalled } from '../../api';
-import { getLogger, isAndroidChrome } from '../../lib';
+import { getLogger, isAndroidChrome, setupLogger } from '../../lib';
+import { getSDKVersion } from '../../native/lib';
 import { FPTI_TRANSITION, FPTI_CUSTOM_KEY } from '../../constants';
 import { type OnShippingChangeData } from '../../props/onShippingChange';
 import { checkout } from '../checkout';
@@ -26,10 +27,14 @@ function setupNative({ props, serviceData } : SetupOptions) : ZalgoPromise<void>
 }
 
 function initNative({ props, components, config, payment, serviceData } : InitOptions) : PaymentFlowInstance {
-    const { onApprove, onCancel, onError,
+    const { env, clientID, sdkCorrelationID, locale, sessionID, onApprove, onCancel, onError,
         buttonSessionID, onShippingChange } = props;
     const { fundingSource } = payment;
+    const { buyerCountry } = serviceData;
     const { firebase: firebaseConfig } = config;
+    const sdkVersion = getSDKVersion();
+
+    setupLogger({ env, sessionID, clientID, sdkCorrelationID, locale, sdkVersion, buyerCountry, fundingSource });
 
     if (!firebaseConfig) {
         throw new Error(`Can not run native flow without firebase config`);
