@@ -49,7 +49,7 @@ function getEligibility({ fundingSource, props, serviceData, validatePromise } :
                 const ineligibleReasons = eligibility && eligibility[fundingSource]?.ineligibilityReason?.split(',');
 
                 const eligible = ineligibleReasons?.every(reason => {
-                    return eligibleReasons?.indexOf(reason) !== -1;
+                    return reason ? eligibleReasons?.indexOf(reason) !== -1 : true;
                 });
 
                 if (
