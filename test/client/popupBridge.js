@@ -5,6 +5,8 @@ import { wrapPromise, parseQuery } from 'belter/src';
 import { ZalgoPromise } from 'zalgo-promise/src';
 import { FUNDING } from '@paypal/sdk-constants/src';
 
+import { promiseNoop } from '../../src/lib';
+
 import { mockSetupButton, mockAsyncProp, createButtonHTML, DEFAULT_FUNDING_ELIGIBILITY, clickButton, generateOrderID, getGraphQLApiMock } from './mocks';
 
 describe('popup bridge cases', () => {
@@ -472,5 +474,61 @@ describe('popup bridge cases', () => {
             await clickButton(FUNDING.PAYPAL);
         });
     });
+    it('should not throw an error if opType is returned as undefined', async () => {
+        return await wrapPromise(async ({ expect, avoid }) => {
 
+            const nativeUrl = 'native://foobar';
+            const orderID = generateOrderID();
+            const payerID = 'YYYYYYYYYY';
+            window.xprops.commit = true;
+            window.xprops.onApprove = mockAsyncProp(avoid('onApprove', promiseNoop));
+
+            window.xprops.createOrder = mockAsyncProp(expect('createOrder', async () => {
+                return ZalgoPromise.try(() => {
+                    return orderID;
+                });
+            }));
+
+            window.xprops.getPopupBridge = mockAsyncProp(expect('getPopupBridge', async () => {
+                return {
+                    nativeUrl,
+                    start: expect('start', async (url) => {
+                        const query = parseQuery(url.split('?')[1]);
+
+                        if (query.token !== orderID) {
+                            throw new Error(`Expected token to be ${ orderID }, got ${ query.token }`);
+                        }
+
+                        if (query.useraction !== 'commit') {
+                            throw new Error(`Expected useraction to be commit, got ${ query.useraction }`);
+                        }
+
+                        if (query.fundingSource !== FUNDING.PAYPAL) {
+                            throw new Error(`Expected fundingSource to be ${ FUNDING.PAYPAL }, got ${ query.fundingSource }`);
+                        }
+
+                        if (!query.redirect_uri) {
+                            throw new Error(`Expected redirect_uri to be present in url`);
+                        }
+
+                        if (query.native_xo !== '1') {
+                            throw new Error(`Expected native_xo to be 1, got ${ query.native_xo }`);
+                        }
+
+                        return {
+                            opType:  undefined,
+                            token:   orderID,
+                            PayerID: payerID
+                        };
+                    })
+                };
+            }));
+
+            createButtonHTML();
+
+            await mockSetupButton({ merchantID: [ 'XYZ12345' ], fundingEligibility: DEFAULT_FUNDING_ELIGIBILITY });
+
+            await clickButton(FUNDING.PAYPAL);
+        });
+    });
 });

@@ -5,7 +5,7 @@ import { getDomain } from 'cross-domain-utils/src';
 import { extendUrl } from 'belter/src';
 
 import { WEB_CHECKOUT_URI } from '../config';
-import { promiseNoop } from '../lib';
+import { getLogger, promiseNoop } from '../lib';
 import { POPUP_BRIDGE_OPTYPE } from '../props';
 import { USER_ACTION } from '../constants';
 
@@ -85,7 +85,12 @@ function initPopupBridge({ props, payment } : InitOptions) : PaymentFlowInstance
                 return onCancel();
             }
 
-            throw new Error(`Unhandleable opType: ${ opType }`);
+            // Handle undefined `opType`
+            if (opType === undefined) {
+                getLogger().warn(`Undefined opType returned from Popup Bridge`);
+            } else {
+                throw new Error(`Unhandleable opType: ${ opType }`);
+            }
         });
     };
 
