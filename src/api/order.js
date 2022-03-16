@@ -439,7 +439,7 @@ export function subscriptionIdToCartId(subscriptionID : string) : ZalgoPromise<s
     });
 }
 
-export function enableVault({ orderID, clientAccessToken, fundingSource, integrationArtifact, userExperienceFlow, productFlow, buttonSessionID} : {| orderID : string, clientAccessToken : string, fundingSource : string, integrationArtifact : string, userExperienceFlow : string, productFlow : string, buttonSessionID : string |}) : ZalgoPromise<mixed> {
+export function enableVault({ orderID, clientAccessToken, fundingSource, integrationArtifact, userExperienceFlow, productFlow, buttonSessionID } : {| orderID : string, clientAccessToken : string, fundingSource : string, integrationArtifact : string, userExperienceFlow : string, productFlow : string, buttonSessionID : string |}) : ZalgoPromise<mixed> {
     return callGraphQL({
         name:  'EnableVault',
         query: `
@@ -462,7 +462,7 @@ export function enableVault({ orderID, clientAccessToken, fundingSource, integra
             }
         `,
         variables: {
-            orderID,fundingSource, integrationArtifact, userExperienceFlow, productFlow, buttonSessionID
+            orderID, fundingSource, integrationArtifact, userExperienceFlow, productFlow, buttonSessionID
         },
         headers: {
             [ HEADERS.ACCESS_TOKEN ]:   clientAccessToken,

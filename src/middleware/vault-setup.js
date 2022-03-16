@@ -8,7 +8,6 @@ import { enableVault, getFundingEligibility } from '../api';
 import { getLogger } from '../lib';
 import { type CreateBillingAgreement, type CreateSubscription } from '../props';
 import { INTEGRATION_ARTIFACT, PRODUCT_FLOW, USER_EXPERIENCE_FLOW } from '../constants';
-import { string } from '../config';
 
 
 type VaultAutoSetupEligibleProps = {|
@@ -58,9 +57,9 @@ type EnableVaultSetupOptions = {|
     disableFunding : ?$ReadOnlyArray<$Values<typeof FUNDING>>,
     disableCard : ?$ReadOnlyArray<$Values<typeof CARD>>,
     userIDToken : ?string,
-    inline: ?boolean,
-    userExperienceFlow: ?string,
-    buttonSessionID: string
+    inline : ?boolean,
+    userExperienceFlow : ?string,
+    buttonSessionID : string
 |};
 
 
