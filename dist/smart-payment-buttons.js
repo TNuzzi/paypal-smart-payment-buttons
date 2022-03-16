@@ -7172,7 +7172,7 @@ window.spb = function(modules) {
             logger_getLogger().info("rest_api_create_order_token");
             var headers = ((_headers15 = {}).authorization = "Bearer " + accessToken, _headers15["paypal-partner-attribution-id"] = partnerAttributionID, 
             _headers15["paypal-client-metadata-id"] = clientMetadataID, _headers15["x-app-name"] = "smart-payment-buttons", 
-            _headers15["x-app-version"] = "5.0.88", _headers15);
+            _headers15["x-app-version"] = "5.0.89", _headers15);
             var paymentSource = {
                 token: {
                     id: paymentMethodID,
@@ -12535,7 +12535,7 @@ window.spb = function(modules) {
                         var vaultPromise = createOrder().then((function(orderID) {
                             return promise_ZalgoPromise.try((function() {
                                 if (clientID && "pay" === buyerIntent) return function(_ref3) {
-                                    var orderID = _ref3.orderID, vault = _ref3.vault, clientAccessToken = _ref3.clientAccessToken, createBillingAgreement = _ref3.createBillingAgreement, createSubscription = _ref3.createSubscription, fundingSource = _ref3.fundingSource, clientID = _ref3.clientID, merchantID = _ref3.merchantID, buyerCountry = _ref3.buyerCountry, currency = _ref3.currency, commit = _ref3.commit, intent = _ref3.intent, disableFunding = _ref3.disableFunding, disableCard = _ref3.disableCard, userIDToken = _ref3.userIDToken;
+                                    var orderID = _ref3.orderID, vault = _ref3.vault, clientAccessToken = _ref3.clientAccessToken, createBillingAgreement = _ref3.createBillingAgreement, createSubscription = _ref3.createSubscription, fundingSource = _ref3.fundingSource, clientID = _ref3.clientID, merchantID = _ref3.merchantID, buyerCountry = _ref3.buyerCountry, currency = _ref3.currency, commit = _ref3.commit, intent = _ref3.intent, disableFunding = _ref3.disableFunding, disableCard = _ref3.disableCard, userIDToken = _ref3.userIDToken, _ref3$inline = _ref3.inline, inline = void 0 !== _ref3$inline && _ref3$inline, userExperienceFlow = _ref3.userExperienceFlow, buttonSessionID = _ref3.buttonSessionID;
                                     return promise_ZalgoPromise.try((function() {
                                         logger_getLogger().info("vault_auto_setup_vault_" + vault.toString() + "_id_token_" + (userIDToken ? "present" : "not_present")).flush();
                                         return function(_ref2) {
@@ -12626,16 +12626,26 @@ window.spb = function(modules) {
                                             var orderID = _ref15.orderID;
                                             return callGraphQL({
                                                 name: "EnableVault",
-                                                query: "\n            mutation EnableVault(\n                $orderID : String!\n            ) {\n                enableVault(\n                    token: $orderID\n                )\n            }\n        ",
+                                                query: "\n            mutation EnableVault(\n                $orderID : String!,\n                $fundingSource : ButtonFundingSourceType!,\n                $integrationArtifact : IntegrationArtifactType!,\n                $userExperienceFlow : UserExperienceFlowType!,\n                $productFlow : ProductFlowType!,\n                $buttonSessionID : String\n            ) {\n                enableVault(\n                    token: $orderID,\n                    fundingSource: $fundingSource,\n                    integrationArtifact: $integrationArtifact,\n                    userExperienceFlow: $userExperienceFlow,\n                    productFlow: $productFlow,\n                    buttonSessionID: $buttonSessionID\n                )\n            }\n        ",
                                                 variables: {
-                                                    orderID: orderID
+                                                    orderID: orderID,
+                                                    fundingSource: _ref15.fundingSource,
+                                                    integrationArtifact: _ref15.integrationArtifact,
+                                                    userExperienceFlow: _ref15.userExperienceFlow,
+                                                    productFlow: _ref15.productFlow,
+                                                    buttonSessionID: _ref15.buttonSessionID
                                                 },
                                                 headers: (_headers16 = {}, _headers16["x-paypal-internal-euat"] = _ref15.clientAccessToken, 
                                                 _headers16["paypal-client-context"] = orderID, _headers16)
                                             });
                                         }({
                                             orderID: orderID,
-                                            clientAccessToken: clientAccessToken
+                                            clientAccessToken: clientAccessToken,
+                                            fundingSource: fundingSource,
+                                            integrationArtifact: "PAYPAL_JS_SDK",
+                                            userExperienceFlow: userExperienceFlow || (inline ? "INLINE" : "INCONTEXT"),
+                                            productFlow: "SMART_PAYMENT_BUTTONS",
+                                            buttonSessionID: buttonSessionID
                                         }).catch((function(err) {
                                             if (vault) throw err;
                                         }));
@@ -12656,7 +12666,10 @@ window.spb = function(modules) {
                                     intent: intent,
                                     disableFunding: disableFunding,
                                     disableCard: disableCard,
-                                    userIDToken: userIDToken
+                                    userIDToken: userIDToken,
+                                    userExperienceFlow: userExperienceFlow,
+                                    buttonSessionID: buttonSessionID,
+                                    inline: inline
                                 });
                             }));
                         }));
@@ -13297,7 +13310,7 @@ window.spb = function(modules) {
                 logger.addTrackingBuilder((function() {
                     var _ref3;
                     return (_ref3 = {}).state_name = "smart_button", _ref3.context_type = "button_session_id", 
-                    _ref3.context_id = buttonSessionID, _ref3.button_session_id = buttonSessionID, _ref3.button_version = "5.0.88", 
+                    _ref3.context_id = buttonSessionID, _ref3.button_session_id = buttonSessionID, _ref3.button_version = "5.0.89", 
                     _ref3.button_correlation_id = buttonCorrelationID, _ref3.stickiness_id = isAndroidChrome() ? stickinessID : null, 
                     _ref3.bn_code = partnerAttributionID, _ref3.user_action = commit ? "commit" : "continue", 
                     _ref3.seller_id = merchantID[0], _ref3.merchant_domain = merchantDomain, _ref3.t = Date.now().toString(), 
